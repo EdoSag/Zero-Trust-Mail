@@ -1,7 +1,7 @@
 name: zerotrust_mail
 description: "Zero-Trust Mail: private email for the accounts you have and encrypted ztmail.me mailboxes."
 publish_to: none
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ^3.9.0
