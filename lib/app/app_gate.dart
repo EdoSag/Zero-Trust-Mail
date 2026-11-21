@@ -65,7 +65,10 @@ class _AppGateState extends ConsumerState<AppGate> with WidgetsBindingObserver {
   }
 
   void _forgotPassword() => Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (_) => ZtForgotPasswordScreen(redirectTo: EmailLinks.passwordReset)),
+    MaterialPageRoute<void>(
+      builder: (_) =>
+          ZtForgotPasswordScreen(redirectTo: EmailLinks.passwordReset),
+    ),
   );
 
   @override

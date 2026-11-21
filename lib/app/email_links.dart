@@ -27,6 +27,11 @@ abstract final class EmailLinks {
   static StreamSubscription<Uri>? _links;
   static final _used = <String>{};
 
+  /// A reset link was accepted and the new password is not set yet. A link
+  /// that starts the app is accepted before anything listens for the auth
+  /// event, so the gate reads this instead of relying on the event alone.
+  static bool recoveryPending = false;
+
   /// Starts handling reset links. Call once, after Supabase.initialize.
   /// (Links that carry `?code=` instead, from the default email template,
   /// are handled by supabase_flutter itself.)
@@ -52,8 +57,11 @@ abstract final class EmailLinks {
     if (!_used.add(tokenHash)) return;
     try {
       // Signs in for recovery and raises AuthChangeEvent.passwordRecovery.
-      await Supabase.instance.client.auth
-          .verifyOTP(type: OtpType.recovery, tokenHash: tokenHash);
+      await Supabase.instance.client.auth.verifyOTP(
+        type: OtpType.recovery,
+        tokenHash: tokenHash,
+      );
+      recoveryPending = true;
     } on Object catch (e) {
       // Expired or already used: the sign-in screen stays, and Forgot
       // password sends a new link.

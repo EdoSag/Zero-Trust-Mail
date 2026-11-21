@@ -66,9 +66,8 @@ class MemoryMailCache implements MailCache {
     int limit = 50,
     int offset = 0,
   }) async {
-    final all = [
-      ...?_messages[_folderKey(accountId, folderId)]?.values,
-    ]..sort((a, b) => b.date.compareTo(a.date));
+    final all = [...?_messages[_folderKey(accountId, folderId)]?.values]
+      ..sort((a, b) => b.date.compareTo(a.date));
     return all.skip(offset).take(limit).toList();
   }
 
