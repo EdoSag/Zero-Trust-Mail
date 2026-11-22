@@ -85,6 +85,14 @@ class _AccountPageState extends ConsumerState<AccountPage> {
         _outHost.text = preset.outgoing.host;
         _outPort.text = '${preset.outgoing.port}';
         _serversFromPreset = true;
+      } else if (preset == null && _serversFromPreset) {
+        // The address is no longer that provider's, so its servers would be
+        // wrong. Servers the user typed are never cleared.
+        _inHost.clear();
+        _outHost.clear();
+        _inPort.text = '993';
+        _outPort.text = '465';
+        _serversFromPreset = false;
       }
     });
   }
@@ -244,8 +252,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
               autocorrect: false,
               textDirection: TextDirection.ltr,
               autofillHints: const [AutofillHints.email],
-              validator: (v) =>
-                  looksLikeEmail(v ?? '') ? null : l.invalidEmail,
+              validator: (v) => looksLikeEmail(v ?? '') ? null : l.invalidEmail,
               onChanged: _emailChanged,
             ),
             const SizedBox(height: 12),

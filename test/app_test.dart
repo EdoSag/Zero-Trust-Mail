@@ -24,7 +24,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Add your first mail account'), findsOneWidget);
     // The button sits under the explanation, not over it.
-    final body = tester.getRect(find.textContaining('Use the mail you already'));
+    final body = tester.getRect(
+      find.textContaining('Use the mail you already'),
+    );
     final button = tester.getRect(find.text('Add account'));
     expect(button.top, greaterThan(body.bottom));
 
@@ -101,6 +103,29 @@ void main() {
     await scrollTo(tester, field('Incoming server (IMAP)'));
     expect(find.text('mail.own.net'), findsOneWidget);
     expect(find.text('imap.gmail.com'), findsNothing);
+  });
+
+  testWidgets('a provider\'s servers go when the address changes provider', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app(const HomePage()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add account'));
+    await tester.pumpAndSettle();
+    await tester.enterText(field('Email address'), 'dana@gmail.com');
+    await tester.enterText(field('Password'), 'secret');
+    await tester.pumpAndSettle();
+    await tester.enterText(field('Email address'), 'dana@example.com');
+    await tester.pumpAndSettle();
+    await scrollTo(tester, field('Incoming server (IMAP)'));
+    expect(find.text('imap.gmail.com'), findsNothing);
+    expect(find.text('smtp.gmail.com'), findsNothing);
+
+    // Nothing is saved with another provider's servers.
+    await scrollTo(tester, find.text('Save'));
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(repo.accounts, isEmpty);
   });
 
   testWidgets('the same address cannot be added twice', (tester) async {

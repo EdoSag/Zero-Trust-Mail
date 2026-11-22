@@ -91,8 +91,14 @@ void main() {
   group('ProviderPreset', () {
     test('knows the big providers, whatever the case', () {
       final gmail = ProviderPreset.forEmail('Someone@GMAIL.com')!;
-      expect(gmail.incoming, const MailServer(host: 'imap.gmail.com', port: 993));
-      expect(gmail.outgoing, const MailServer(host: 'smtp.gmail.com', port: 465));
+      expect(
+        gmail.incoming,
+        const MailServer(host: 'imap.gmail.com', port: 993),
+      );
+      expect(
+        gmail.outgoing,
+        const MailServer(host: 'smtp.gmail.com', port: 465),
+      );
       expect(gmail.needsAppPassword, isTrue);
       final icloud = ProviderPreset.forEmail('x@me.com')!;
       expect(icloud.outgoing.port, 587);
@@ -130,7 +136,10 @@ void main() {
       await cache.applyChanges(
         'a',
         'INBOX',
-        FolderChanges(state: 's1', upserted: [message('1', 1), message('2', 2)]),
+        FolderChanges(
+          state: 's1',
+          upserted: [message('1', 1), message('2', 2)],
+        ),
       );
       await cache.putBody('a', 'INBOX', '1', const MessageBody(text: 'hello'));
       await cache.applyChanges(
@@ -154,7 +163,10 @@ void main() {
       await cache.applyChanges(
         'a',
         'INBOX',
-        FolderChanges(state: 's1', upserted: [message('1', 1), message('2', 2)]),
+        FolderChanges(
+          state: 's1',
+          upserted: [message('1', 1), message('2', 2)],
+        ),
       );
       await cache.applyChanges(
         'a',
@@ -164,42 +176,44 @@ void main() {
       expect((await cache.messages('a', 'INBOX')).single.id, '7');
     });
 
-    test('accounts and folders are kept apart; clearing one leaves the other',
-        () async {
-      final cache = MemoryMailCache();
-      for (final account in ['a', 'ab']) {
-        await cache.putFolders(account, const [
-          MailFolder(id: 'INBOX', name: 'Inbox', role: FolderRole.inbox),
-        ]);
+    test(
+      'accounts and folders are kept apart; clearing one leaves the other',
+      () async {
+        final cache = MemoryMailCache();
+        for (final account in ['a', 'ab']) {
+          await cache.putFolders(account, const [
+            MailFolder(id: 'INBOX', name: 'Inbox', role: FolderRole.inbox),
+          ]);
+          await cache.applyChanges(
+            account,
+            'INBOX',
+            FolderChanges(state: account, upserted: [message('1', 1)]),
+          );
+          await cache.putBody(
+            account,
+            'INBOX',
+            '1',
+            MessageBody(text: 'for $account'),
+          );
+        }
         await cache.applyChanges(
-          account,
-          'INBOX',
-          FolderChanges(state: account, upserted: [message('1', 1)]),
+          'a',
+          'Sent',
+          FolderChanges(state: 'x', upserted: [message('5', 5)]),
         );
-        await cache.putBody(
-          account,
-          'INBOX',
-          '1',
-          MessageBody(text: 'for $account'),
-        );
-      }
-      await cache.applyChanges(
-        'a',
-        'Sent',
-        FolderChanges(state: 'x', upserted: [message('5', 5)]),
-      );
-      expect((await cache.messages('a', 'INBOX')).single.id, '1');
+        expect((await cache.messages('a', 'INBOX')).single.id, '1');
 
-      await cache.clearAccount('a');
-      expect(await cache.folders('a'), isEmpty);
-      expect(await cache.messages('a', 'INBOX'), isEmpty);
-      expect(await cache.messages('a', 'Sent'), isEmpty);
-      expect(await cache.folderState('a', 'INBOX'), isNull);
-      expect(await cache.body('a', 'INBOX', '1'), isNull);
-      // 'ab' starts with 'a' but is another account.
-      expect((await cache.messages('ab', 'INBOX')).single.id, '1');
-      expect((await cache.body('ab', 'INBOX', '1'))!.text, 'for ab');
-      expect((await cache.folders('ab')).single.role, FolderRole.inbox);
-    });
+        await cache.clearAccount('a');
+        expect(await cache.folders('a'), isEmpty);
+        expect(await cache.messages('a', 'INBOX'), isEmpty);
+        expect(await cache.messages('a', 'Sent'), isEmpty);
+        expect(await cache.folderState('a', 'INBOX'), isNull);
+        expect(await cache.body('a', 'INBOX', '1'), isNull);
+        // 'ab' starts with 'a' but is another account.
+        expect((await cache.messages('ab', 'INBOX')).single.id, '1');
+        expect((await cache.body('ab', 'INBOX', '1'))!.text, 'for ab');
+        expect((await cache.folders('ab')).single.role, FolderRole.inbox);
+      },
+    );
   });
 }

@@ -49,8 +49,8 @@ class MailServer {
     return MailServer(
       host: host,
       port: port.toInt(),
-      security: MailSecurity.values.asNameMap()[json['security']] ??
-          MailSecurity.tls,
+      security:
+          MailSecurity.values.asNameMap()[json['security']] ?? MailSecurity.tls,
     );
   }
 

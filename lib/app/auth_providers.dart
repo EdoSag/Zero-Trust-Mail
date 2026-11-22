@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'email_links.dart';
+
 /// Every Supabase auth event (sign-in, sign-out, password-recovery link).
 final authStateChangesProvider = StreamProvider<AuthState>(
   (ref) => Supabase.instance.client.auth.onAuthStateChange,
@@ -27,8 +29,12 @@ class PasswordRecovery extends Notifier<bool> {
         state = true;
       }
     });
-    return false;
+    // A reset link that started the app was accepted before this listened.
+    return EmailLinks.recoveryPending;
   }
 
-  void done() => state = false;
+  void done() {
+    EmailLinks.recoveryPending = false;
+    state = false;
+  }
 }

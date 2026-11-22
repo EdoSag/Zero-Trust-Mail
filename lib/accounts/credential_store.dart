@@ -19,8 +19,7 @@ class SecureCredentialStore implements CredentialStore {
   static String _key(String accountId) => 'zt_mail_secret_$accountId';
 
   @override
-  Future<String?> read(String accountId) =>
-      _storage.read(key: _key(accountId));
+  Future<String?> read(String accountId) => _storage.read(key: _key(accountId));
 
   @override
   Future<void> write(String accountId, String secret) =>
