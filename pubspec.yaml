@@ -1,0 +1,58 @@
+name: zerotrust_mail
+description: "Zero-Trust Mail: private email for the accounts you have and encrypted ztmail.me mailboxes."
+publish_to: none
+version: 0.2.0+3
+
+environment:
+  sdk: ^3.9.0
+
+# Builds SQLite3MultipleCiphers instead of plain SQLite, so the core's local
+# store is encrypted as a whole file (see Zero-Trust-Core README, "Sync").
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # Shared account, keys, sync, settings and look of every Zero-Trust app.
+  # Core 0.13.0 (tag v0.13.0). Never add cryptography_flutter: it breaks the
+  # core's key derivation.
+  zero_trust_core:
+    git:
+      url: https://github.com/EdoSag/Zero-Trust-Core.git
+      path: packages/zero_trust_core
+      ref: v1.0.1
+  flutter_riverpod: ^3.5.0
+  supabase_flutter: ^2.9.0
+  # Reset links from account emails (EmailLinks).
+  app_links: ">=6.4.0 <8.0.0"
+  flutter_dotenv: ^6.0.1
+  intl: any
+  url_launcher: ^6.3.1
+  uuid: ^4.5.1
+  # Account passwords, on this phone only. Same version the core resolves;
+  # never raise it on its own (v11 wipes data written by v9).
+  flutter_secure_storage: any
+
+dev_dependencies:
+  # Release checks every Zero-Trust app runs in CI (keys, sync, sign-in, app
+  # setup, database). Independent of zero_trust_core, so it may be newer.
+  # Core PR #70 (adds the `mail` app id); move to the Dev merge once in.
+  zt_release_checks:
+    git:
+      url: https://github.com/EdoSag/Zero-Trust-Core.git
+      path: packages/zt_release_checks
+      ref: v1.0.1
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+    - .env
