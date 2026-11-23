@@ -49,7 +49,7 @@ class ZeroTrustMailApp extends ConsumerWidget {
           AppL10n.delegate,
           ...ZtLanguages.delegates,
         ],
-        home: home,
+        home: ZtSignInHandoffScope(child: home),
         // Any touch on any screen counts as activity for auto-lock.
         builder: (BuildContext context, Widget? child) => Listener(
           onPointerDown: (_) =>
