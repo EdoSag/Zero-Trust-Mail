@@ -1,7 +1,7 @@
 name: zerotrust_mail
 description: "Zero-Trust Mail: private email for the accounts you have and encrypted ztmail.me mailboxes."
 publish_to: none
-version: 0.1.1+2
+version: 0.2.0+3
 
 environment:
   sdk: ^3.9.0
@@ -25,7 +25,7 @@ dependencies:
     git:
       url: https://github.com/EdoSag/Zero-Trust-Core.git
       path: packages/zero_trust_core
-      ref: v0.13.0
+      ref: v1.0.1
   flutter_riverpod: ^3.5.0
   supabase_flutter: ^2.9.0
   # Reset links from account emails (EmailLinks).
@@ -46,7 +46,7 @@ dev_dependencies:
     git:
       url: https://github.com/EdoSag/Zero-Trust-Core.git
       path: packages/zt_release_checks
-      ref: 7284574719e9c0184b8f16b13b9a0f00729bb6ac
+      ref: v1.0.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
